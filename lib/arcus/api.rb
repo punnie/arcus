@@ -293,12 +293,14 @@ module Arcus
             target_clazz.actions << action_clazz
 
             target_clazz.instance_eval do
-              define_method(action.to_sym) do |params, callbacks|
+              define_method(action.to_sym) do |*args|
+                  params, callbacks, = *args
                   params ||= {}
                   callbacks ||= {}
                   action_clazz.new.prepare(params, callbacks)
               end
-              define_method("#{action}!".to_sym) do |params, callbacks|
+              define_method("#{action}!".to_sym) do |*args|
+                  params, callbacks, = *args
                   params ||= {}
                   callbacks ||= {}
                   action_clazz.new.prepare(params, callbacks)
