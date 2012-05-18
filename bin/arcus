@@ -4,7 +4,7 @@ require 'arcus/cli'
 require 'uri'
 require 'yaml'
 
-RC_FILE = "#{Dir.home}/.arcusrc"
+RC_FILE = File.join(File.expand_path("~"), "/.arcusrc")
 
 $settings = {}
 if (File.exists? RC_FILE)

@@ -177,11 +177,12 @@ module Arcus
     end
 
     def self.load_config_file(api_xml)
+      home_dir = File.expand_path("~")
       contents = File.read(api_xml).to_s
       md5 = Digest::MD5.hexdigest(contents)
       api_xml_basename = File.basename(api_xml)
-      md5_file = Dir::home() + "/.#{api_xml_basename}.md5"
-      cache_file = Dir::home() + "/.#{api_xml_basename}.cache"
+      md5_file = home_dir + "/.#{api_xml_basename}.md5"
+      cache_file = home_dir + "/.#{api_xml_basename}.cache"
       if File::exists?(md5_file) && File::read(md5_file).to_s == md5 && File::exists?(cache_file)
         config = Marshal.restore(File::read(cache_file))
       else
@@ -292,10 +293,14 @@ module Arcus
             target_clazz.actions << action_clazz
 
             target_clazz.instance_eval do
-              define_method(action.to_sym) do |params = {}, callbacks = {}|
+              define_method(action.to_sym) do |params, callbacks|
+                  params ||= {}
+                  callbacks ||= {}
                   action_clazz.new.prepare(params, callbacks)
               end
-              define_method("#{action}!".to_sym) do |params = {}, callbacks = {}|
+              define_method("#{action}!".to_sym) do |params, callbacks|
+                  params ||= {}
+                  callbacks ||= {}
                   action_clazz.new.prepare(params, callbacks)
               end
             end
